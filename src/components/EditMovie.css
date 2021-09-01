@@ -1,3 +1,19 @@
 label {
     font-weight: bold;
 }
+
+
+
+.delete {
+    background-color: lightcoral;
+    text-decoration: line-through; 
+    text-decoration-color: black;
+    text-decoration-thickness: 2px;    
+    }
+
+.add {
+    background-color:green;    
+  }
+
+
+  

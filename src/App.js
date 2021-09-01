@@ -1,15 +1,16 @@
 import React, { Component, Fragment } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Movies from './components/Movies';
 import Admin from './components/Admin';
 import Home from './components/Home';
-import OneMovie from './components/OneMovie';
-import Genres from './components/Genres';
-import OneGenre from './components/OneGenre';
-import EditMovie from './components/EditMovie';
+import GenresFunc from './components/GenresFunc';
+import OneMovieFunc from './components/OneMovieFunc';
+import OneGenreFunc from './components/OneGenreFunc';
 import Login from './components/Login';
 import GraphQL from './components/GraphQL';
 import OneMovieGraphQL from './components/OneMovieGraphQL';
+import MoviesFunc from './components/MoviesFunc';
+import EditMovieFunc from './components/EditMovieFunc';
+
 
 export default class App extends Component {
 
@@ -110,24 +111,24 @@ export default class App extends Component {
             <div className="col-md-10">
               <Switch>
 
-                <Route path="/movie/:id" component={OneMovie} />
+                <Route path="/movie/:id" component={OneMovieFunc} />
                 <Route path="/moviegraphql/:id" component={OneMovieGraphQL} />
 
                 <Route path="/movies">
-                  <Movies />
+                  <MoviesFunc />
                 </Route>
 
-                <Route path="/genre/:id" component={OneGenre} />
+                <Route path="/genre/:id" component={OneGenreFunc} />
 
                 <Route exact path="/genres">
-                  <Genres />
+                  <GenresFunc />
                 </Route>
 
                 <Route exact path="/login" component={(props) => <Login {...props} handleJWTChange={this.handleJWTChange} />}>
                 </Route>
 
                 <Route path="/admin/movie/:id" component={(props) => (
-                  <EditMovie {...props} jwt={this.state.jwt} />
+                  <EditMovieFunc {...props} jwt={this.state.jwt} />
                 )}
                 />
 
