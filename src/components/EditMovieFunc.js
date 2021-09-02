@@ -30,9 +30,7 @@ export default function EditMovieFunc(props) {
     const [errors, setErrors] = useState([])
     const [alert, setAlert] = useState({ type: "d-none", message: "" });
     const [genres, setGenres] = useState([])
-    const [list, setList] = useState([]);
-
-
+    const [list, setList] = useState([])
 
     const mpaaOptions = [
         { id: "G", value: "G" },
@@ -132,7 +130,7 @@ export default function EditMovieFunc(props) {
 
     useEffect(() => {
 
-        console.log(list)
+        console.log("genre change list", list)
 
         return () => {
 
@@ -140,18 +138,42 @@ export default function EditMovieFunc(props) {
     }, [list])
 
 
+    useEffect(() => {
+        // I need to get this in the payload
+        // it fires sometime after the submit :-(
+        console.log("genres in movie", movie.genres)
+        return () => {
+
+        }
+    }, [movie.genres])
+
+
     const handleSubmit = (evt) => {
         evt.preventDefault();
 
-        console.log("MPAA:", movie.mpaa_rating)
+        for (var i = 0; i < list.length; i++) {
+            let evt = list[i];
+            if (evt.action === "add") {
+                setMovie({
+                    ...movie, genres: [...movie.genres, evt.name]
+                });
+            } else {
+                setMovie({
+                    ...movie, genres: [...movie.genres.filter((e) => (e !== evt.name))]
+                });
+            }
+        }
 
+        
+
+        // update genre changes
+        
 
         // do validation
         let errors = [];
         if (movie.title === "") {
             errors.push("title");
         }
-
 
         if (movie.year === "") {
             errors.push("year")
@@ -185,8 +207,17 @@ export default function EditMovieFunc(props) {
         }
 
         // we passed, so post info
+
         const data = new FormData(evt.target);
+
+        for (var j = 0; j < movie.genres.length; j++) {
+            data.append(movie.genres[j], movie.genres[j])
+        }
+
         const payload = Object.fromEntries(data.entries());
+
+        console.log(JSON.stringify(payload))
+
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", "Bearer " + props.jwt);
@@ -214,13 +245,14 @@ export default function EditMovieFunc(props) {
     const handleChange = () => (evt) => {
         let value = evt.target.value;
         let name = evt.target.name;
+
         setMovie({
             ...movie,
             [name]: value,
+            // test code 
+            // genres: [...movie.genres, 'Action'] 
         });
     }
-
-
 
     const confirmDelete = () => (evt) => {
         console.log("would delete id", movie.id);
@@ -277,10 +309,9 @@ export default function EditMovieFunc(props) {
         return list.includes(value)
     }
 
-
     const AddName = (e) => {
         let name = e.target.id;
-        setList([...list, name]);
+
         // clear everything
         e.target.classList.remove("bg-secondary")
         e.target.classList.remove("text-dark")
@@ -292,18 +323,21 @@ export default function EditMovieFunc(props) {
         // when it dies not 'active' is add
         if (movieContainsGenre(name)) {
             e.target.classList.add("delete")
+            setList([...list, { name: name, action: "delete" }]);
         } else {
             e.target.classList.add("add")
+            setList([...list, { name: name, action: "add" }]);
         }
     };
 
+    // sets classes back to original list  
     const RemoveName = (e) => {
         let name = e.target.id;
-        setList(list.filter((e) => (e !== name)))
+        setList(list.filter((e) => (e.name !== name)))
 
         e.target.classList.remove("add")
         e.target.classList.remove("delete")
-        
+
         if (movieContainsGenre(name)) {
             e.target.classList.add("bg-secondary")
         } else {
@@ -314,7 +348,8 @@ export default function EditMovieFunc(props) {
 
     function toggleGenre(evt) {
 
-        console.log("clicked:", evt)
+        //  console.log("clicked:", evt)
+
         if (list.includes(evt.target.id)) {
             RemoveName(evt)
         } else {
@@ -426,6 +461,8 @@ export default function EditMovieFunc(props) {
 
                                                 key={index} value={m.id} id={m.genre_name} name={m.genre_name}
                                                 onClick={e => toggleGenre(e)}
+
+
                                             >
                                                 {m.genre_name}
                                             </span>)
