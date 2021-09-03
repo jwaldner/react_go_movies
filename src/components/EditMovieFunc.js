@@ -221,7 +221,7 @@ export default function EditMovieFunc(props) {
         const data = new FormData(evt.target);
 
         for (var j = 0; j < movie.genres.length; j++) {
-            data.append(movie.genres[j], movie.genres[j])
+            data.append(movie.genres[j], getGenreDbKey (movie.genres[j]))
         }
 
         const payload = Object.fromEntries(data.entries());
@@ -260,7 +260,7 @@ export default function EditMovieFunc(props) {
             ...movie,
             [name]: value,
             // test code 
-             genres: [...movie.genres, 'Action'] 
+            //  genres: [...movie.genres, 'Action'] 
         });
     }
 
@@ -315,10 +315,6 @@ export default function EditMovieFunc(props) {
         });
     };
 
-    function isActive(value) {
-        return list.includes(value)
-    }
-
     const AddName = (e) => {
         let name = e.target.id;
 
@@ -370,6 +366,20 @@ export default function EditMovieFunc(props) {
     function hasError(key) {
         return errors.indexOf(key) !== -1;
     }
+
+    function getGenreDbKey(genre) {
+        var found = -1;
+
+        for (var i = 0; i < genres.length; i++) {
+            if (genres[i].genre_name === genre) {
+                found = genres[i].id;
+                break;
+            }
+        }
+
+        return found
+    }
+
 
     function movieContainsGenre(genre) {
         var found = false;
@@ -466,7 +476,7 @@ export default function EditMovieFunc(props) {
 
                                         return (
                                             <span
-                                                className={`badge ${movieContainsGenre(m.genre_name) ? "badge bg-secondary" : "bg-light text-dark"} ${isActive(m.genre_name) ? "" : ""} me-1`}
+                                                className={`badge ${movieContainsGenre(m.genre_name) ? "badge bg-secondary" : "bg-light text-dark"} me-1`}
                                                 //className={`badge ${!isActive(m.genre_name) ? "active" : "inactive"} me-1`}
 
                                                 key={index} value={m.id} id={m.genre_name} name={m.genre_name}
