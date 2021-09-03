@@ -141,33 +141,43 @@ export default function EditMovieFunc(props) {
     useEffect(() => {
         // I need to get this in the payload
         // it fires sometime after the submit :-(
+
         console.log("genres in movie", movie.genres)
         return () => {
 
         }
-    }, [movie.genres])
+    }, [movie])
 
 
     const handleSubmit = (evt) => {
         evt.preventDefault();
 
+        setMovie({
+            ...movie, genres: [] 
+        });
+
+         let arr = movie.genres;
+       
         for (var i = 0; i < list.length; i++) {
             let evt = list[i];
-            if (evt.action === "add") {
-                setMovie({
-                    ...movie, genres: [...movie.genres, evt.name]
-                });
+            if (!movie.genres.includes(evt)) {
+                arr.push(evt);   // Adds "Kiwi"
             } else {
-                setMovie({
-                    ...movie, genres: [...movie.genres.filter((e) => (e !== evt.name))]
-                });
+               
+                var index = arr.indexOf(evt);
+                if (index !== -1) {
+                  arr.splice(index, 1);
+                }
             }
         }
 
-        
+      //  console.log("tt",arr)
+        setMovie({
+            ...movie, genres: arr
+        });
 
         // update genre changes
-        
+
 
         // do validation
         let errors = [];
@@ -250,7 +260,7 @@ export default function EditMovieFunc(props) {
             ...movie,
             [name]: value,
             // test code 
-            // genres: [...movie.genres, 'Action'] 
+             genres: [...movie.genres, 'Action'] 
         });
     }
 
@@ -320,20 +330,20 @@ export default function EditMovieFunc(props) {
         e.target.classList.remove("add")
 
         // when the genre exists 'active' is delete
-        // when it dies not 'active' is add
+        // when it does not 'active' is add
         if (movieContainsGenre(name)) {
             e.target.classList.add("delete")
-            setList([...list, { name: name, action: "delete" }]);
+            setList([...list,  name]);
         } else {
             e.target.classList.add("add")
-            setList([...list, { name: name, action: "add" }]);
+            setList([...list, name ]);
         }
     };
 
     // sets classes back to original list  
     const RemoveName = (e) => {
         let name = e.target.id;
-        setList(list.filter((e) => (e.name !== name)))
+        setList(list.filter((e) => (e !== name)))
 
         e.target.classList.remove("add")
         e.target.classList.remove("delete")
@@ -461,8 +471,6 @@ export default function EditMovieFunc(props) {
 
                                                 key={index} value={m.id} id={m.genre_name} name={m.genre_name}
                                                 onClick={e => toggleGenre(e)}
-
-
                                             >
                                                 {m.genre_name}
                                             </span>)
