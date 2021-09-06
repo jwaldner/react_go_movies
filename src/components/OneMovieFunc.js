@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
+import Bar from './form-components/Bar';
 
 export default function OneMovieFunc(props) {
 
@@ -30,6 +31,11 @@ export default function OneMovieFunc(props) {
     movie.genres = [];
   }
 
+  let arr = []
+  for (var i = 0; i < movie.genres.length; i++) {
+     arr.push({id: i, genre_name: movie.genres[i]})     
+  }
+
   if (error !== null) {
     return <div>Error: {error.message}</div>;
   } else {
@@ -39,18 +45,11 @@ export default function OneMovieFunc(props) {
           Movie: {movie.title} ({movie.year})
         </h2>
 
-        <div className="float-start">
-          <small>Rating: {movie.mpaa_rating}</small>
-        </div>
-        <div className="float-end">
-          {movie.genres.map((m, index) => (
-            <span className="badge bg-secondary me-1" key={index}>
-              {m}
-            </span>
-          ))}
-        </div>
-        <div className="clearfix"></div>
-        <hr />
+        <Bar options={arr} compare={movie.genres}
+          smallTitle={"Rated:"} smallProp={movie.mpaa_rating}
+          handleClick={console.log("non edit bar item clicked!")}
+        />
+
         <table className="table table-compact table-striped">
           <thead></thead>
           <tbody>
@@ -75,7 +74,7 @@ export default function OneMovieFunc(props) {
       </Fragment>
     );
   }
-  
+
 }
 
 

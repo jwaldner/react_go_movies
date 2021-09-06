@@ -9,8 +9,6 @@ const Select = (props) => {
                 {props.title} {" "}
             </label>
 
-             
-
             <select name={props.name} className={`form-select ${props.className}`} 
             value={props.value} onChange={props.handleChange}>
                 <option className="form-select" value="" >{props.placeholder}</option>

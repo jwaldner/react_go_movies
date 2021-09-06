@@ -7,6 +7,7 @@ import TextArea from "./form-components/TextArea";
 import Alert from "./ui-components/Alert";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import Bar from './form-components/Bar';
 
 export default function EditMovieFunc(props) {
 
@@ -153,25 +154,25 @@ export default function EditMovieFunc(props) {
         evt.preventDefault();
 
         setMovie({
-            ...movie, genres: [] 
+            ...movie, genres: []
         });
 
-         let arr = movie.genres;
-       
+        let arr = movie.genres;
+
         for (var i = 0; i < list.length; i++) {
             let evt = list[i];
             if (!movie.genres.includes(evt)) {
                 arr.push(evt);   // Adds "Kiwi"
             } else {
-               
+
                 var index = arr.indexOf(evt);
                 if (index !== -1) {
-                  arr.splice(index, 1);
+                    arr.splice(index, 1);
                 }
             }
         }
 
-      //  console.log("tt",arr)
+        //  console.log("tt",arr)
         setMovie({
             ...movie, genres: arr
         });
@@ -220,10 +221,14 @@ export default function EditMovieFunc(props) {
 
         const data = new FormData(evt.target);
 
+
+        var movieGenres = []
+
         for (var j = 0; j < movie.genres.length; j++) {
-            data.append(movie.genres[j], getGenreDbKey (movie.genres[j]))
+            movieGenres.push(getGenreJsonKey(movie.genres[j]))
         }
 
+        data.append("genres", JSON.stringify(movieGenres))
         const payload = Object.fromEntries(data.entries());
 
         console.log(JSON.stringify(payload))
@@ -329,10 +334,10 @@ export default function EditMovieFunc(props) {
         // when it does not 'active' is add
         if (movieContainsGenre(name)) {
             e.target.classList.add("delete")
-            setList([...list,  name]);
+            setList([...list, name]);
         } else {
             e.target.classList.add("add")
-            setList([...list, name ]);
+            setList([...list, name]);
         }
     };
 
@@ -352,6 +357,15 @@ export default function EditMovieFunc(props) {
         }
     };
 
+    const handleToggle = () => (evt) => {
+        if (list.includes(evt.target.id)) {
+            RemoveName(evt)
+        } else {
+            AddName(evt)
+        }
+    }
+
+
     function toggleGenre(evt) {
 
         //  console.log("clicked:", evt)
@@ -367,17 +381,26 @@ export default function EditMovieFunc(props) {
         return errors.indexOf(key) !== -1;
     }
 
-    function getGenreDbKey(genre) {
-        var found = -1;
+    function getGenreJsonKey(genre) {
+        var id = -1;
+        var genre_name = "";
+        var json_name = "";
+        var created_at = "";
+        var updated_at = "";
+
 
         for (var i = 0; i < genres.length; i++) {
             if (genres[i].genre_name === genre) {
-                found = genres[i].id;
+                id = genres[i].id;
+                genre_name = genres[i].genre_name;
+                json_name = genres[i].json_name;
+                created_at = genres[i].created_at;
+                updated_at = genres[i].updated_at;
                 break;
             }
         }
 
-        return found
+        return { id: id, genre_name: genre_name, json_name: json_name }
     }
 
 
@@ -463,35 +486,11 @@ export default function EditMovieFunc(props) {
                                 errorMsg={"Please enter a mpaa rating"}
                             />)}
 
-                        {movie && (
-                            <div>
-                                <div className="float-start">
-                                    <label>Genres: </label>
-                                </div>
-                                <div className="float-end">
 
-                                    {genres.map((m, index) => {
+                        <Bar title={"Genres:"} options={genres} compare={movie.genres}
+                            handleClick={handleToggle()}
 
-                                        //const v = true;
-
-                                        return (
-                                            <span
-                                                className={`badge ${movieContainsGenre(m.genre_name) ? "badge bg-secondary" : "bg-light text-dark"} me-1`}
-                                                //className={`badge ${!isActive(m.genre_name) ? "active" : "inactive"} me-1`}
-
-                                                key={index} value={m.id} id={m.genre_name} name={m.genre_name}
-                                                onClick={e => toggleGenre(e)}
-                                            >
-                                                {m.genre_name}
-                                            </span>)
-
-                                        //   <button value="blue" onClick={e => changeColor(e.target.value)}>Color Change</button
-                                    })}
-                                </div>
-                                <div className="clearfix"></div>
-                                <hr />
-                            </div>
-                        )}
+                        />
 
                         {movie && (
                             <Input
