@@ -5,7 +5,7 @@ const Bar = (props) => {
    return (
    <div>
     <div className="float-start">
-    <small> {props.smallTitle} {props.smallProp}</small> 
+    <small> {props.subTitle} {props.subElement}</small> 
         <label> {props.title} </label>
     </div>
     <div className="float-end">

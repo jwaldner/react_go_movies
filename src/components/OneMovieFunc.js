@@ -46,7 +46,7 @@ export default function OneMovieFunc(props) {
         </h2>
 
         <Bar options={arr} compare={movie.genres}
-          smallTitle={"Rated:"} smallProp={movie.mpaa_rating}
+          subTitle={"Rated:"} subElement={movie.mpaa_rating}
           handleClick={console.log("non edit bar item clicked!")}
         />
 
