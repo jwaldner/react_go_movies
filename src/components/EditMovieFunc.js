@@ -269,7 +269,57 @@ export default function EditMovieFunc(props) {
         });
     }
 
-    const confirmDelete = () => (evt) => {
+    
+    
+    
+    // right
+    const confirmDelete = (e) => {
+   
+        console.log("would delete id", `${process.env.REACT_APP_API_URL}/v1/admin/deletemovie/${movie.id}`)
+
+        confirmAlert({
+            title: "Delete Movie?",
+            message: "Are you sure?",
+            buttons: [
+              {
+                label: "Yes",
+                onClick: () => {
+                  // delete the movie
+                  const myHeaders = new Headers();
+                  myHeaders.append("Content-Type", "application/json");
+                  myHeaders.append("Authorization", "Bearer " + props.jwt);
+      
+                  fetch(`${process.env.REACT_APP_API_URL}/v1/admin/deletemovie/` +
+                            movie.id,
+                            {
+                                method: "GET",
+                                headers: myHeaders,
+                            }
+                        )
+                    .then((response) => response.json)
+                    .then((data) => {
+                      if (data.error) {
+                        setAlert({type: "alert-danger", message: data.error.message});
+                      } else {
+                        setAlert({type: "alert-success", message: "Movie deleted!"});
+                        props.history.push({
+                          pathname: "/admin",
+                        });
+                      }
+                    });
+                },
+              },
+              {
+                label: "No",
+                onClick: () => {},
+              },
+            ],
+          });
+    }
+
+    // wrong
+    const confirmDeleteBad = () => (e) => {
+        
         console.log("would delete id", movie.id);
 
         confirmAlert({
